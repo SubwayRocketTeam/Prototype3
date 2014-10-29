@@ -20,8 +20,7 @@ bool Player::init()
 	{
 		scarfNode[i].point = Vec2(i*SCARF_LEN, 0);
 //		scarfNode[i].velocity[i] = Vec2(0, 0);
-		for (int j = 0; j < SCARF_DELAY; ++j)
-			scarfNode[i].tail[j] = Vec2(1, 0);
+		scarfNode[i].tail = Vec2(1, 0);
 	}
 	scarfStartDirection = Vec2(1, 0);
 
@@ -45,33 +44,31 @@ void Player::updateScarf(float dt)
 	t += dt*8;
 
 	Vec2 pos = getPosition();
-	scarfNode[0].velocity[0] = pos - scarfNode[0].point;
 	scarfStartDirection = -getLookingDirection();
-
 	scarfStartDirection.rotate(Vec2::ZERO, std::sin(t)*0.25);
-	scarfNode[0].tail[0] += (scarfStartDirection - scarfNode[0].tail[0])*0.25;
-	scarfNode[0].point = pos;
-	
+
 	for (int i = SCARF - 1; i > 0; --i)
 	{
 		scarfNode[i].point += scarfNode[i].velocity[SCARF_DELAY - 1];
-		scarfNode[i].point += (scarfNode[i - 1].tail[SCARF_DELAY - 1] - scarfNode[i - 1].tail[SCARF_DELAY - 2]) * (SCARF_LEN * i);
+		scarfNode[i].point += (scarfNode[i - 1].tail - scarfNode[i].tail) * (SCARF_LEN * i);
 
 		for (int j = SCARF_DELAY - 1; j > 0; --j)
 		{
 			scarfNode[i].velocity[j] = scarfNode[i].velocity[j - 1];
-			scarfNode[i].tail[j] = scarfNode[i].tail[j - 1];
 		}
 
 		scarfNode[i].velocity[0] = scarfNode[i - 1].velocity[SCARF_DELAY - 1];
-		scarfNode[i].tail[0] = scarfNode[i - 1].tail[SCARF_DELAY - 1];
+		scarfNode[i].tail = scarfNode[i - 1].tail;
 	}
 
 	for (int j = SCARF_DELAY - 1; j > 0; --j)
 	{
 		scarfNode[0].velocity[j] = scarfNode[0].velocity[j - 1];
-		scarfNode[0].tail[j] = scarfNode[0].tail[j - 1];
 	}
+
+	scarfNode[0].velocity[0] = pos - scarfNode[0].point;
+	scarfNode[0].tail += (scarfStartDirection - scarfNode[0].tail)*0.25;
+	scarfNode[0].point = pos;
 
 }
 

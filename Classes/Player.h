@@ -26,7 +26,7 @@ private:
 	{
 		cocos2d::Vec2 point;
 		cocos2d::Vec2 velocity[SCARF_DELAY];
-		cocos2d::Vec2 tail[SCARF_DELAY];
+		cocos2d::Vec2 tail;
 	};
 
 	ScarfNode scarfNode[SCARF];
